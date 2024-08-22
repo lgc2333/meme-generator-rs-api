@@ -1,0 +1,41 @@
+{
+  "name": "meme-generator-api",
+  "packageManager": "yarn@4.4.0",
+  "description": "API Wrapper for MeetWq/meme-generator",
+  "version": "0.1.0",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b && dumble",
+    "test": "yarn build && mocha"
+  },
+  "files": [
+    "dist"
+  ],
+  "author": "student_2333 <lgc2333@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/lgc2333/meme-generator-api",
+  "keywords": [
+    "meme",
+    "meme-generator",
+    "memes",
+    "memes-api",
+    "meetwq"
+  ],
+  "peerDependencies": {
+    "@cordisjs/plugin-http": "^0.4.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.17",
+    "@types/chai-as-promised": "^7.1.8",
+    "@types/mocha": "^10.0.7",
+    "chai": "^5.1.1",
+    "chai-as-promised": "^8.0.0",
+    "dotenv": "^16.4.5",
+    "dumble": "^0.2.0",
+    "mocha": "^10.7.3",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4"
+  }
+}
