@@ -24,18 +24,18 @@
     "meetwq"
   ],
   "peerDependencies": {
-    "@cordisjs/plugin-http": "^0.6.2"
+    "@cordisjs/plugin-http": "^0.6.3"
   },
   "devDependencies": {
-    "@types/chai": "^5.0.0",
+    "@types/chai": "^5.0.1",
     "@types/chai-as-promised": "^8.0.1",
-    "@types/mocha": "^10.0.8",
-    "chai": "^5.1.1",
-    "chai-as-promised": "^8.0.0",
-    "dotenv": "^16.4.5",
-    "dumble": "^0.2.0",
-    "mocha": "^10.7.3",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.2"
+    "@types/mocha": "^10.0.10",
+    "chai": "^5.1.2",
+    "chai-as-promised": "^8.0.1",
+    "dotenv": "^16.4.7",
+    "dumble": "^0.2.1",
+    "mocha": "^11.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }
