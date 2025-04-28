@@ -17,10 +17,10 @@ async function reqCatchWrapper<T>(fn: () => Promise<HTTP.Response<T>>): Promise<
 }
 
 export class MemeAPI {
-  public readonly imgOps: MemeImageOperationAPI
+  public readonly imgOps: MemeAPI.ImageOperations
 
   constructor(public readonly http: HTTP) {
-    this.imgOps = new MemeImageOperationAPI(http)
+    this.imgOps = new MemeAPI.ImageOperations(http)
   }
 
   public async getVersion(): Promise<string> {
@@ -119,156 +119,161 @@ export class MemeAPI {
   }
 }
 
-export class MemeImageOperationAPI {
-  constructor(public readonly http: HTTP) {}
+export namespace MemeAPI {
+  export class ImageOperations {
+    constructor(public readonly http: HTTP) {}
 
-  public async inspectImage(imageId: string): Promise<ImageInspectResponse> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/inspect`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId },
-      }),
-    ).then((res) => JSON.parse(res) as ImageInspectResponse)
-  }
+    public async inspectImage(imageId: string): Promise<ImageInspectResponse> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/inspect`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId },
+        }),
+      ).then((res) => JSON.parse(res) as ImageInspectResponse)
+    }
 
-  public async flipHorizontal(imageId: string): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/flip_horizontal`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async flipHorizontal(imageId: string): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/flip_horizontal`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async flipVertical(imageId: string): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/flip_vertical`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async flipVertical(imageId: string): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/flip_vertical`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async rotate(imageId: string, degrees?: number): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/rotate`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId, degrees },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async rotate(imageId: string, degrees?: number): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/rotate`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId, degrees },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async resize(
-    imageId: string,
-    width?: number,
-    height?: number,
-  ): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/resize`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId, width, height },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async resize(
+      imageId: string,
+      width?: number,
+      height?: number,
+    ): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/resize`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId, width, height },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async crop(
-    imageId: string,
-    left?: number,
-    top?: number,
-    right?: number,
-    bottom?: number,
-  ): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/crop`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId, left, top, right, bottom },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async crop(
+      imageId: string,
+      left?: number,
+      top?: number,
+      right?: number,
+      bottom?: number,
+    ): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/crop`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId, left, top, right, bottom },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async grayscale(imageId: string): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/grayscale`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async grayscale(imageId: string): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/grayscale`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async invert(imageId: string): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/invert`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async invert(imageId: string): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/invert`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async mergeHorizontal(imageIds: string[]): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/merge_horizontal`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_ids: imageIds },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async mergeHorizontal(imageIds: string[]): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/merge_horizontal`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_ids: imageIds },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async mergeVertical(imageIds: string[]): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/merge_vertical`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_ids: imageIds },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async mergeVertical(imageIds: string[]): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/merge_vertical`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_ids: imageIds },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async gifSplit(imageId: string): Promise<ImageIDs> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/gif_split`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId },
-      }),
-    ).then((res) => JSON.parse(res) as ImageIDs)
-  }
+    public async gifSplit(imageId: string): Promise<ImageIDs> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/gif_split`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId },
+        }),
+      ).then((res) => JSON.parse(res) as ImageIDs)
+    }
 
-  public async gifMerge(imageIds: string[], duration?: number): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/gif_merge`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_ids: imageIds, duration },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async gifMerge(imageIds: string[], duration?: number): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/gif_merge`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_ids: imageIds, duration },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async gifReverse(imageId: string): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/gif_reverse`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
+    public async gifReverse(imageId: string): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/gif_reverse`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
 
-  public async gifChangeDuration(imageId: string, duration: number): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/image_operations/gif_change_duration`, {
-        method: 'POST',
-        responseType: 'text',
-        data: { image_id: imageId, duration },
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
+    public async gifChangeDuration(
+      imageId: string,
+      duration: number,
+    ): Promise<ImageID> {
+      return reqCatchWrapper(() =>
+        this.http(`tools/image_operations/gif_change_duration`, {
+          method: 'POST',
+          responseType: 'text',
+          data: { image_id: imageId, duration },
+        }),
+      ).then((res) => JSON.parse(res) as ImageID)
+    }
   }
 }
