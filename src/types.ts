@@ -1,129 +1,46 @@
-// #region alconna
-
-/**
- * 节点触发的动作类型
- * @see https://github.com/ArcletProject/Alconna/blob/75196c3/src/arclet/alconna/action.py#L6
- */
-export enum ActType {
-  /**
-   * 无 Args 时, 仅存储一个值, 默认为 Ellipsis; 有 Args 时, 后续的解析结果会覆盖之前的值
-   */
-  STORE = 0,
-  /**
-   * 无 Args 时, 将多个值存为列表, 默认为 Ellipsis; 有 Args 时, 每个解析结果会追加到列表中
-   *
-   * 当存在默认值并且不为列表时, 会自动将默认值变成列表, 以保证追加的正确性
-   */
-  APPEND = 1,
-  /**
-   * 无 Args 时, 计数器加一; 有 Args 时, 表现与 STORE 相同
-   *
-   * 当存在默认值并且不为数字时, 会自动将默认值变成 1, 以保证计数器的正确性
-   */
-  COUNT = 2,
+export interface ParserFlags {
+  short: boolean
+  long: boolean
+  short_aliases: string[]
+  long_aliases: string[]
 }
 
-/**
- * 节点触发的动作
- * @see https://github.com/ArcletProject/Alconna/blob/75196c3/src/arclet/alconna/action.py#L24
- */
-export interface Action {
-  type: ActType
-  value: any
-}
-
-/**
- * 标识参数单元的特殊属性
- * @see https://github.com/ArcletProject/Alconna/blob/75196c3/src/arclet/alconna/args.py#L28
- */
-export enum ArgFlag {
-  OPTIONAL = '?',
-  HIDDEN = '/',
-  ANTI = '!',
-}
-
-// #endregion
-
-// #region meme-generator
-
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/meme.py#L23
- */
-export type UserInfoGender = 'male' | 'female' | 'unknown'
-export interface UserInfo {
-  name?: string
-  gender?: UserInfoGender
-}
-
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/meme.py#L44
- */
-export interface ParserArg {
+export interface MemeOption {
+  type: 'boolean' | 'integer' | 'float' | 'string'
   name: string
-  value: string
-  default?: any | null
-  flags?: ArgFlag[] | null
+  default: boolean | number | string | null
+  description?: string | null
+  parser_flags: ParserFlags
+  choices?: string[] | null
+  minimum?: number | null
+  maximum?: number | null
 }
 
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/meme.py#L51
- */
-export interface ParserOption {
-  names: string[]
-  args?: ParserArg[] | null
-  dest?: string | null
-  default?: any | null
-  action?: Action | null
-  help_text?: string | null
-  compact?: boolean | null
-}
-
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/meme.py#L81
- */
-export interface CommandShortcut {
-  key: string
-  args?: string[] | null
+export interface MemeShortcut {
+  pattern: string
   humanized?: string | null
+  names: string[]
+  texts: string[]
+  options: Record<string, any>
 }
 
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/app.py#L24
- */
-export interface MemeArgsResponse {
-  args_model: Record<string, any>
-  args_examples: Record<string, any>[]
-  parser_options: ParserOption[]
-}
-
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/app.py#L30
- */
-export interface MemeParamsResponse {
-  min_images: number
-  max_images: number
-  min_texts: number
-  max_texts: number
-  default_texts: string[]
-  args_type?: MemeArgsResponse | null
-}
-
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/app.py#L39
- */
-export interface MemeInfoResponse {
+export interface MemeInfo {
   key: string
-  params_type: MemeParamsResponse
+  params: {
+    min_images: number
+    max_images: number
+    min_texts: number
+    max_texts: number
+    default_texts: string[]
+    options: MemeOption[]
+  }
   keywords: string[]
-  shortcuts: CommandShortcut[]
+  shortcuts: MemeShortcut[]
   tags: string[]
   date_created: string
   date_modified: string
 }
 
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/app.py#L93
- */
 export type MemeKeyWithPropertiesLabel = 'new' | 'hot'
 export interface MemeKeyWithProperties {
   meme_key: string
@@ -131,28 +48,148 @@ export interface MemeKeyWithProperties {
   labels?: MemeKeyWithPropertiesLabel[]
 }
 
-/**
- * @see https://github.com/MeetWq/meme-generator/blob/8bb9fba/meme_generator/app.py#L105
- */
 export interface RenderMemeListRequest {
   meme_list?: MemeKeyWithProperties[]
   text_template?: string
   add_category_icon?: boolean
 }
 
-/**
- * @see https://github.com/pydantic/pydantic-core/blob/4113638/python/pydantic_core/__init__.py#L73
- */
-export interface PyDanticErrorDetails {
-  type: string
-  loc: (string | number)[]
-  msg: string
-  input: any
-  ctx?: Record<string, any>
+export interface UploadImageRequest {
+  type: 'url' | 'path' | 'data'
+  url?: string
+  headers?: Record<string, string>
+  path?: string
+  data?: string
 }
 
-export interface MemeErrorResponse {
-  detail: PyDanticErrorDetails[] | string
+export interface ImageID {
+  image_id: string
 }
 
-// #endregion
+export interface ImageIDs {
+  image_ids: string[]
+}
+
+export interface ImageInspectResponse {
+  width: number
+  height: number
+  is_multi_frame: boolean
+  frame_count: number | null
+  average_duration: number | null
+}
+
+export interface GifMergeRequest {
+  image_ids: string[]
+  duration?: number
+}
+
+export interface RenderStatisticsRequest {
+  title: string
+  statistics_type: 'meme_count' | 'time_count'
+  data: [string, number][]
+}
+
+export interface RenderMemeRequestImage {
+  name: string
+  id: string
+}
+
+export interface RenderMemeRequest {
+  images: RenderMemeRequestImage[]
+  texts: string[]
+  options: Record<string, any>
+}
+
+export const errorCodeDesc = {
+  510: 'ImageDecodeError',
+  520: 'ImageEncodeError',
+  530: 'ImageAssetMissingError',
+  540: 'DeserializeError',
+  550: 'ImageNumberMismatchError',
+  551: 'TextNumberMismatchError',
+  560: 'TextOverLengthError',
+  570: 'MemeFeedbackError',
+}
+export type PossibleMemeErrorCode = keyof typeof errorCodeDesc
+export const possibleMemeErrorCodes = <PossibleMemeErrorCode[]>(
+  Object.keys(errorCodeDesc).map((v) => parseInt(v, 10))
+)
+
+export interface BaseMemeErrorResp<
+  C extends PossibleMemeErrorCode,
+  D extends Record<string, any> = {},
+> {
+  code: C
+  message: string
+  data: D
+}
+
+export interface ImageDecodeErrorData {
+  error: string
+}
+
+export interface ImageDecodeErrorResp
+  extends BaseMemeErrorResp<510, ImageDecodeErrorData> {}
+
+export interface ImageEncodeErrorData {
+  error: string
+}
+
+export interface ImageEncodeErrorResp
+  extends BaseMemeErrorResp<520, ImageEncodeErrorData> {}
+
+export interface ImageAssetMissingData {
+  path: string
+}
+
+export interface ImageAssetMissingErrorResp
+  extends BaseMemeErrorResp<530, ImageAssetMissingData> {}
+
+export interface DeserializeErrorData {
+  error: string
+}
+
+export interface DeserializeErrorResp
+  extends BaseMemeErrorResp<540, DeserializeErrorData> {}
+
+export interface ImageNumberMismatchData {
+  min: number
+  max: number
+  actual: number
+}
+
+export interface ImageNumberMismatchErrorResp
+  extends BaseMemeErrorResp<550, ImageNumberMismatchData> {}
+
+export interface TextNumberMismatchData {
+  min: number
+  max: number
+  actual: number
+}
+
+export interface TextNumberMismatchErrorResp
+  extends BaseMemeErrorResp<551, TextNumberMismatchData> {}
+
+export interface TextOverLengthData {
+  text: string
+}
+
+export interface TextOverLengthErrorResp
+  extends BaseMemeErrorResp<560, TextOverLengthData> {}
+
+export interface MemeFeedbackData {
+  feedback: string
+}
+
+export interface MemeFeedbackErrorResp
+  extends BaseMemeErrorResp<570, MemeFeedbackData> {}
+
+export type MemeErrorResp =
+  | ImageDecodeErrorResp
+  | ImageEncodeErrorResp
+  | ImageAssetMissingErrorResp
+  | DeserializeErrorResp
+  | ImageNumberMismatchErrorResp
+  | TextNumberMismatchErrorResp
+  | TextOverLengthErrorResp
+  | MemeFeedbackErrorResp
