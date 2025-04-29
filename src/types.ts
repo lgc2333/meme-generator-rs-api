@@ -134,9 +134,9 @@ export const errorCodeDesc = {
 }
 
 export type PossibleMemeErrorCode = keyof typeof errorCodeDesc
-export const possibleMemeErrorCodes = <PossibleMemeErrorCode[]>(
-  Object.keys(errorCodeDesc).map((v) => parseInt(v, 10))
-)
+export const possibleMemeErrorCodes = Object.keys(errorCodeDesc).map((v) =>
+  parseInt(v, 10),
+) as PossibleMemeErrorCode[]
 
 export interface BaseMemeErrorResponse<
   C extends PossibleMemeErrorCode,
