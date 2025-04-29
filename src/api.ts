@@ -2,9 +2,9 @@ import { HTTP } from '@cordisjs/plugin-http'
 
 import { MemeError } from './error'
 import {
-  ImageIDs,
-  ImageInspectResponse,
   ImageID,
+  ImageIDs,
+  ImgOps,
   MemeInfo,
   RenderMemeListRequest,
   RenderMemeRequest,
@@ -12,7 +12,9 @@ import {
   UploadImageRequest,
 } from './types'
 
-async function reqCatchWrapper<T>(fn: () => Promise<HTTP.Response<T>>): Promise<T> {
+export async function reqCatchWrapper<T>(
+  fn: () => Promise<HTTP.Response<T>>,
+): Promise<T> {
   return (await MemeError.catchWrapper(fn)).data
 }
 
@@ -21,12 +23,6 @@ export class MemeAPI {
 
   constructor(public readonly http: HTTP) {
     this.imgOps = new MemeAPI.ImageOperations(http)
-  }
-
-  public async getVersion(): Promise<string> {
-    return reqCatchWrapper(() =>
-      this.http(`meme/version`, { method: 'GET', responseType: 'text' }),
-    )
   }
 
   public async uploadImage(data: UploadImageRequest): Promise<ImageID> {
@@ -48,6 +44,12 @@ export class MemeAPI {
     )
   }
 
+  public async getVersion(): Promise<string> {
+    return reqCatchWrapper(() =>
+      this.http(`meme/version`, { method: 'GET', responseType: 'text' }),
+    )
+  }
+
   public async getKeys(): Promise<string[]> {
     return reqCatchWrapper(() =>
       this.http(`meme/keys`, { method: 'GET', responseType: 'text' }),
@@ -60,10 +62,7 @@ export class MemeAPI {
     ).then((res) => JSON.parse(res) as MemeInfo[])
   }
 
-  public async searchMemes(
-    query: string,
-    includeTags: boolean = false,
-  ): Promise<string[]> {
+  public async searchMemes(query: string, includeTags?: boolean): Promise<string[]> {
     return reqCatchWrapper(() =>
       this.http(`meme/search`, {
         method: 'GET',
@@ -71,26 +70,6 @@ export class MemeAPI {
         responseType: 'text',
       }),
     ).then((res) => JSON.parse(res) as string[])
-  }
-
-  public async renderList(data?: RenderMemeListRequest): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/render_list`, {
-        method: 'POST',
-        responseType: 'text',
-        data,
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
-  }
-
-  public async renderStatistics(data: RenderStatisticsRequest): Promise<ImageID> {
-    return reqCatchWrapper(() =>
-      this.http(`tools/render_statistics`, {
-        method: 'POST',
-        responseType: 'text',
-        data,
-      }),
-    ).then((res) => JSON.parse(res) as ImageID)
   }
 
   public async getInfo(key: string): Promise<MemeInfo> {
@@ -117,20 +96,40 @@ export class MemeAPI {
       }),
     ).then((res) => JSON.parse(res) as ImageID)
   }
+
+  public async renderList(data?: RenderMemeListRequest): Promise<ImageID> {
+    return reqCatchWrapper(() =>
+      this.http(`tools/render_list`, {
+        method: 'POST',
+        responseType: 'text',
+        data,
+      }),
+    ).then((res) => JSON.parse(res) as ImageID)
+  }
+
+  public async renderStatistics(data: RenderStatisticsRequest): Promise<ImageID> {
+    return reqCatchWrapper(() =>
+      this.http(`tools/render_statistics`, {
+        method: 'POST',
+        responseType: 'text',
+        data,
+      }),
+    ).then((res) => JSON.parse(res) as ImageID)
+  }
 }
 
 export namespace MemeAPI {
   export class ImageOperations {
     constructor(public readonly http: HTTP) {}
 
-    public async inspectImage(imageId: string): Promise<ImageInspectResponse> {
+    public async inspect(imageId: string): Promise<ImgOps.InspectResponse> {
       return reqCatchWrapper(() =>
         this.http(`tools/image_operations/inspect`, {
           method: 'POST',
           responseType: 'text',
           data: { image_id: imageId },
         }),
-      ).then((res) => JSON.parse(res) as ImageInspectResponse)
+      ).then((res) => JSON.parse(res) as ImgOps.InspectResponse)
     }
 
     public async flipHorizontal(imageId: string): Promise<ImageID> {
@@ -153,42 +152,41 @@ export namespace MemeAPI {
       ).then((res) => JSON.parse(res) as ImageID)
     }
 
-    public async rotate(imageId: string, degrees?: number): Promise<ImageID> {
+    public async rotate(
+      imageId: string,
+      extra: ImgOps.RotateRequestExtra,
+    ): Promise<ImageID> {
       return reqCatchWrapper(() =>
         this.http(`tools/image_operations/rotate`, {
           method: 'POST',
           responseType: 'text',
-          data: { image_id: imageId, degrees },
+          data: { image_id: imageId, ...extra },
         }),
       ).then((res) => JSON.parse(res) as ImageID)
     }
 
     public async resize(
       imageId: string,
-      width?: number,
-      height?: number,
+      extra: ImgOps.ResizeRequestExtra,
     ): Promise<ImageID> {
       return reqCatchWrapper(() =>
         this.http(`tools/image_operations/resize`, {
           method: 'POST',
           responseType: 'text',
-          data: { image_id: imageId, width, height },
+          data: { image_id: imageId, ...extra },
         }),
       ).then((res) => JSON.parse(res) as ImageID)
     }
 
     public async crop(
       imageId: string,
-      left?: number,
-      top?: number,
-      right?: number,
-      bottom?: number,
+      extra: ImgOps.CropRequestExtra,
     ): Promise<ImageID> {
       return reqCatchWrapper(() =>
         this.http(`tools/image_operations/crop`, {
           method: 'POST',
           responseType: 'text',
-          data: { image_id: imageId, left, top, right, bottom },
+          data: { image_id: imageId, ...extra },
         }),
       ).then((res) => JSON.parse(res) as ImageID)
     }
@@ -243,12 +241,15 @@ export namespace MemeAPI {
       ).then((res) => JSON.parse(res) as ImageIDs)
     }
 
-    public async gifMerge(imageIds: string[], duration?: number): Promise<ImageID> {
+    public async gifMerge(
+      imageIds: string[],
+      extra: ImgOps.GifMergeRequestExtra,
+    ): Promise<ImageID> {
       return reqCatchWrapper(() =>
         this.http(`tools/image_operations/gif_merge`, {
           method: 'POST',
           responseType: 'text',
-          data: { image_ids: imageIds, duration },
+          data: { image_ids: imageIds, ...extra },
         }),
       ).then((res) => JSON.parse(res) as ImageID)
     }
@@ -265,13 +266,13 @@ export namespace MemeAPI {
 
     public async gifChangeDuration(
       imageId: string,
-      duration: number,
+      extra: ImgOps.GifChangeDurationRequestExtra,
     ): Promise<ImageID> {
       return reqCatchWrapper(() =>
         this.http(`tools/image_operations/gif_change_duration`, {
           method: 'POST',
           responseType: 'text',
-          data: { image_id: imageId, duration },
+          data: { image_id: imageId, ...extra },
         }),
       ).then((res) => JSON.parse(res) as ImageID)
     }

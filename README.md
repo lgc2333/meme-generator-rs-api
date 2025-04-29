@@ -1,1 +1,1 @@
-# meme-generator-api
+# meme-generator-rs-api

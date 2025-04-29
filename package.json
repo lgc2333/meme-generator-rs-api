@@ -1,5 +1,5 @@
 {
-  "name": "meme-generator-api",
+  "name": "meme-generator-rs-api",
   "packageManager": "yarn@4.4.0",
   "description": "API Wrapper for MeetWq/meme-generator using @cordisjs/plugin-http",
   "version": "0.1.0",
@@ -7,8 +7,7 @@
   "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -b && dumble",
-    "test": "yarn build && mocha"
+    "build": "tsc -b && dumble"
   },
   "files": [
     "dist"
@@ -19,6 +18,7 @@
   "keywords": [
     "meme",
     "meme-generator",
+    "meme-generator-rs",
     "memes",
     "memes-api",
     "meetwq"

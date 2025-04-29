@@ -5,36 +5,39 @@ import { MemeErrorResp, errorCodeDesc } from './types'
 export class MemeError extends Error {
   constructor(
     public readonly httpStatus: number,
-    public readonly data: string,
+    public readonly message: string,
   ) {
-    super(data)
+    super(`(${httpStatus}) ${message}`)
     this.name = 'MemeError'
   }
 }
 
 export class MemeDetailedError extends MemeError {
-  readonly detail: MemeErrorResp
-
-  constructor(public readonly data: string) {
-    const detail = JSON.parse(data) as MemeErrorResp
+  constructor(public readonly data: MemeErrorResp) {
     super(
-      MemeError.errorHttpCode,
-      `(${detail.code}) [${errorCodeDesc[detail.code]}] ${detail.message}`,
+      MemeDetailedError.httpStatus,
+      `${errorCodeDesc[data.code]} (${data.code}): ${data.message}`,
     )
     this.name = 'MemeDetailedError'
-    this.detail = detail
   }
 }
 
+export namespace MemeDetailedError {
+  export const httpStatus = 500
+}
+
 export namespace MemeError {
-  export const errorHttpCode = 500
+  export const Detailed = MemeDetailedError
+  export type Detailed = MemeDetailedError
 
   export function constructFromHTTPError(error: HTTP.Error): MemeError | undefined {
     const { response } = error
-    if (!response || !('detail' in response.data)) return undefined
+    if (!response) return undefined
     const errResp = response as HTTP.Response<string>
-    if (errResp.status === errorHttpCode) {
-      return new MemeDetailedError(errResp.data)
+    if (errResp.status === Detailed.httpStatus) {
+      try {
+        return new MemeDetailedError(JSON.parse(errResp.data))
+      } catch (_) {}
     }
     return new MemeError(errResp.status, errResp.data)
   }
