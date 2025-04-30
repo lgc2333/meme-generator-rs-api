@@ -1,6 +1,6 @@
 import { HTTP } from '@cordisjs/plugin-http'
 
-import { MemeErrorResp, errorCodeDesc } from './types'
+import { MemeErrorResponse, errorCodeDesc } from './types'
 
 export class MemeError extends Error {
   constructor(
@@ -13,7 +13,7 @@ export class MemeError extends Error {
 }
 
 export class MemeDetailedError extends MemeError {
-  constructor(public readonly data: MemeErrorResp) {
+  constructor(public readonly data: MemeErrorResponse) {
     super(
       MemeDetailedError.httpStatus,
       `${errorCodeDesc[data.code]} (${data.code}): ${data.message}`,

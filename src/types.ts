@@ -8,13 +8,11 @@ export interface ImageIDs {
   image_ids: string[]
 }
 
-export interface MemeParams {
-  min_images: number
-  max_images: number
-  min_texts: number
-  max_texts: number
-  default_texts: string[]
-  options: MemeOption[]
+export interface ParserFlags {
+  short: boolean
+  long: boolean
+  short_aliases: string[]
+  long_aliases: string[]
 }
 
 export type MemeOptionType = 'boolean' | 'integer' | 'float' | 'string'
@@ -29,11 +27,13 @@ export interface MemeOption {
   maximum?: number | null
 }
 
-export interface ParserFlags {
-  short: boolean
-  long: boolean
-  short_aliases: string[]
-  long_aliases: string[]
+export interface MemeParams {
+  min_images: number
+  max_images: number
+  min_texts: number
+  max_texts: number
+  default_texts: string[]
+  options: MemeOption[]
 }
 
 export interface MemeShortcut {
@@ -102,8 +102,15 @@ export type MemeListSortBy =
   | 'keywords_pinyin'
   | 'date_created'
   | 'date_modified'
+export const memeListSortByVals = [
+  'key',
+  'keywords',
+  'keywords_pinyin',
+  'date_created',
+  'date_modified',
+] as const satisfies MemeListSortBy[]
 export interface RenderMemeListRequest {
-  meme_properties?: MemeProperties
+  meme_properties?: Record<string, MemeProperties>
   exclude_memes?: string[]
   sort_by?: MemeListSortBy
   sort_reverse?: boolean
@@ -169,39 +176,39 @@ export interface MemeFeedbackErrorData {
   feedback: string
 }
 
-export interface ImageDecodeErrorResp
+export interface ImageDecodeErrorResponse
   extends BaseMemeErrorResponse<510, MemeCommonErrorData> {}
 
-export interface ImageEncodeErrorResp
+export interface ImageEncodeErrorResponse
   extends BaseMemeErrorResponse<520, MemeCommonErrorData> {}
 
-export interface ImageAssetMissingErrorResp
+export interface ImageAssetMissingErrorResponse
   extends BaseMemeErrorResponse<530, MemePathErrorData> {}
 
-export interface DeserializeErrorResp
+export interface DeserializeErrorResponse
   extends BaseMemeErrorResponse<540, MemeCommonErrorData> {}
 
-export interface ImageNumberMismatchErrorResp
+export interface ImageNumberMismatchErrorResponse
   extends BaseMemeErrorResponse<550, MemeNumberMismatchData> {}
 
-export interface TextNumberMismatchErrorResp
+export interface TextNumberMismatchErrorResponse
   extends BaseMemeErrorResponse<551, MemeNumberMismatchData> {}
 
-export interface TextOverLengthErrorResp
+export interface TextOverLengthErrorResponse
   extends BaseMemeErrorResponse<560, MemeTextErrorData> {}
 
-export interface MemeFeedbackErrorResp
+export interface MemeFeedbackErrorResponse
   extends BaseMemeErrorResponse<570, MemeFeedbackErrorData> {}
 
-export type MemeErrorResp =
-  | ImageDecodeErrorResp
-  | ImageEncodeErrorResp
-  | ImageAssetMissingErrorResp
-  | DeserializeErrorResp
-  | ImageNumberMismatchErrorResp
-  | TextNumberMismatchErrorResp
-  | TextOverLengthErrorResp
-  | MemeFeedbackErrorResp
+export type MemeErrorResponse =
+  | ImageDecodeErrorResponse
+  | ImageEncodeErrorResponse
+  | ImageAssetMissingErrorResponse
+  | DeserializeErrorResponse
+  | ImageNumberMismatchErrorResponse
+  | TextNumberMismatchErrorResponse
+  | TextOverLengthErrorResponse
+  | MemeFeedbackErrorResponse
 
 // #endregion
 
