@@ -130,6 +130,8 @@ export interface RenderStatisticsRequest {
 // #region error
 
 export const errorCodeDesc = {
+  410: 'RequestError',
+  420: 'IOError',
   510: 'ImageDecodeError',
   520: 'ImageEncodeError',
   530: 'ImageAssetMissingError',
@@ -176,6 +178,12 @@ export interface MemeFeedbackErrorData {
   feedback: string
 }
 
+export interface RequestErrorResponse
+  extends BaseMemeErrorResponse<410, MemeCommonErrorData> {}
+
+export interface IOErrorResponse
+  extends BaseMemeErrorResponse<420, MemeCommonErrorData> {}
+
 export interface ImageDecodeErrorResponse
   extends BaseMemeErrorResponse<510, MemeCommonErrorData> {}
 
@@ -201,6 +209,8 @@ export interface MemeFeedbackErrorResponse
   extends BaseMemeErrorResponse<570, MemeFeedbackErrorData> {}
 
 export type MemeErrorResponse =
+  | RequestErrorResponse
+  | IOErrorResponse
   | ImageDecodeErrorResponse
   | ImageEncodeErrorResponse
   | ImageAssetMissingErrorResponse

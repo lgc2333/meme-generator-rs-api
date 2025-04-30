@@ -16,7 +16,7 @@ export class MemeDetailedError extends MemeError {
   constructor(public readonly data: MemeErrorResponse) {
     super(
       MemeDetailedError.httpStatus,
-      `${errorCodeDesc[data.code]} (${data.code}): ${data.message}`,
+      `${errorCodeDesc[data.code] ?? 'UnknownError'} (${data.code}): ${data.message}`,
     )
     this.name = 'MemeDetailedError'
   }
@@ -33,13 +33,17 @@ export namespace MemeError {
   export function constructFromHTTPError(error: HTTP.Error): MemeError | undefined {
     const { response } = error
     if (!response) return undefined
-    const errResp = response as HTTP.Response<string>
-    if (errResp.status === Detailed.httpStatus) {
+    const errResp = response as HTTP.Response<any>
+    const dataIsObj = typeof errResp.data === 'object'
+    if (errResp.status === Detailed.httpStatus && dataIsObj) {
       try {
-        return new MemeDetailedError(JSON.parse(errResp.data))
+        return new MemeDetailedError(errResp.data)
       } catch (_) {}
     }
-    return new MemeError(errResp.status, errResp.data)
+    return new MemeError(
+      errResp.status,
+      dataIsObj ? JSON.stringify(errResp.data) : errResp.data,
+    )
   }
 
   export function promiseCatchHandler(e: unknown): never {
