@@ -35,6 +35,18 @@ export class MemeAPI {
     )
   }
 
+  public async uploadImageMultipart(file: Blob): Promise<ImageID> {
+    const data = new FormData()
+    data.append('file', file)
+    return reqCatchWrapper(() =>
+      this.http(`/image/upload`, {
+        method: 'POST',
+        responseType: 'json',
+        data,
+      }),
+    )
+  }
+
   public async getImage(imageId: string): Promise<Blob> {
     return reqCatchWrapper(() =>
       this.http(`/image/${imageId}`, {
