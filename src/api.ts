@@ -39,7 +39,7 @@ export class MemeAPI {
     const data = new FormData()
     data.append('file', file)
     return reqCatchWrapper(() =>
-      this.http(`/image/upload`, {
+      this.http(`/image/upload/multipart`, {
         method: 'POST',
         responseType: 'json',
         data,
